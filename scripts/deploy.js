@@ -14,11 +14,9 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const ERC721Hoge = await hre.ethers.getContractFactory("ERC721Hoge");
-  const ERC20Hoge = await hre.ethers.getContractFactory("ERC20Hoge");
+  const MyNFT = await hre.ethers.getContractFactory("MyNFT");
 
-  await ERC721Hoge.deploy();
-  await ERC20Hoge.deploy()
+  await MyNFT.deploy();
 }
 
 // We recommend this pattern to be able to use async/await everywhere
