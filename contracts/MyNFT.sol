@@ -25,4 +25,8 @@ contract MyNFT is ERC721URIStorage, Ownable {
 
         return newItemId;
     }
+
+    function _baseURI() internal override view virtual returns (string memory) {
+        return "https://ipfs.io/ipfs/";
+    }
 }
