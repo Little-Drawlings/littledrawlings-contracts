@@ -14,8 +14,7 @@ contract MyNFT is ERC721URIStorage, Ownable {
     constructor() ERC721("MyNFT", "NFT") {}
 
     function mintNFT(address recipient, string memory tokenURI)
-        public onlyOwner
-        returns (uint256)
+        public returns (uint256)
     {
         _tokenIds.increment();
 
@@ -27,6 +26,6 @@ contract MyNFT is ERC721URIStorage, Ownable {
     }
 
     function _baseURI() internal override view virtual returns (string memory) {
-        return "https://ipfs.io/ipfs/";
+        return "https://gateway.ipfs.io/ipns/";
     }
 }
