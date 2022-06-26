@@ -1,29 +1,60 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
+
 const hre = require("hardhat");
+const fs = require('fs');
+require('@nomiclabs/hardhat-etherscan');
+
+const AWS = require('aws-sdk');
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
-
-  // We get the contract to deploy
   const MyNFT = await hre.ethers.getContractFactory("MyNFT");
   const MyNFTDeploy = await MyNFT.deploy();
+  const MyNFTDeployed = await MyNFTDeploy.deployed();
 
-  await MyNFTDeploy.deployed();
+  const address = await MyNFTDeployed.address;
 
-  console.log("MyNFT to:", MyNFT.address);
+  console.log(address);
+
+  const MyNftJSON = JSON.parse(fs.readFileSync('./artifacts/contracts/MyNFT.sol/MyNFT.json', 'utf8'));
+  const fileResult = JSON.stringify({
+    address: MyNFTDeployed.address,
+    abi: MyNftJSON.abi
+  })
+
+  const spacesEndpoint = new AWS.Endpoint('nyc3.digitaloceanspaces.com');
+
+  this.s3 = new AWS.S3({
+    endpoint: spacesEndpoint,
+    accessKeyId: process.env.SPACES_KEY,
+    secretAccessKey: process.env.SPACES_SECRET
+  });
+
+  const key = `abi-space/abi.json`;
+  const params = {
+    Bucket: 'ld-s3-dev',
+    Key: key,
+    Body: fileResult,
+    ContentType: 'json',
+    ACL: "public-read",
+  };
+
+  try {
+    await hre.run('verify:verify', {
+      address: MyNFTDeployed.address,
+      constructorArguments: [],
+    });
+  }
+  finally {
+    return new Promise((resolve) => {
+      this.s3.putObject(params, function (err) {
+        if (err) {
+          console.log('[FILE - SAVE]: ERROR ', err);
+          resolve(null);
+        }
+      });
+    })
+  }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main()
   .then(() => process.exit(0))
   .catch((error) => {
