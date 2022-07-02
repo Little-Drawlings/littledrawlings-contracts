@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -37,6 +38,16 @@ module.exports = {
   etherscan: {
     apiKey: {
       rinkeby: process.env.ETHERSCAN_API_KEY,
+      customChains: [
+        {
+          network: "rinkeby",
+          chainId: 4,
+          urls: {
+            apiURL: "https://api-rinkeby.etherscan.io/api",
+            browserURL: "https://rinkeby.etherscan.io"
+          }
+        }
+      ],
       polygon: process.env.POLYGONSCAN_API_KEY,
       polygonMumbai: process.env.POLYGONSCAN_API_KEY,
     },

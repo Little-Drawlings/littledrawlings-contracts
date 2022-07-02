@@ -14,9 +14,11 @@ async function main() {
 
   console.log(address);
 
+  if (!address) return;
+
   const MyNftJSON = JSON.parse(fs.readFileSync('./artifacts/contracts/MyNFT.sol/MyNFT.json', 'utf8'));
   const fileResult = JSON.stringify({
-    address: MyNFTDeployed.address,
+    address: address,
     abi: MyNftJSON.abi
   })
 
@@ -37,22 +39,19 @@ async function main() {
     ACL: "public-read",
   };
 
-  try {
-    await hre.run('verify:verify', {
-      address: MyNFTDeployed.address,
-      constructorArguments: [],
+  await new Promise((resolve) => {
+    this.s3.putObject(params, function (err) {
+      if (err) {
+        console.log('[FILE - SAVE]: ERROR ', err);
+        resolve(null);
+      }
     });
-  }
-  finally {
-    return new Promise((resolve) => {
-      this.s3.putObject(params, function (err) {
-        if (err) {
-          console.log('[FILE - SAVE]: ERROR ', err);
-          resolve(null);
-        }
-      });
-    })
-  }
+  })
+
+  hre.run('verify:verify', {
+    address: address,
+    constructorArguments: [],
+  });
 }
 
 main()
