@@ -33,6 +33,13 @@ module.exports = {
       accounts: [
         '98a2d1575390493238797290385ba7e5c029cb708bb1b4943bfb2049ab85040f'
       ],
+    },
+    rsktestnet: {
+      url: 'https://public-node.testnet.rsk.co/',
+      accounts: [
+        '98a2d1575390493238797290385ba7e5c029cb708bb1b4943bfb2049ab85040f'
+        
+      ]
     }
   },
   etherscan: {
