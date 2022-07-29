@@ -6,17 +6,17 @@ require('@nomiclabs/hardhat-etherscan');
 const AWS = require('aws-sdk');
 
 async function main() {
-  const MyNFT = await hre.ethers.getContractFactory("LittleDrawlingsNFTFlattened");
+  const MyNFT = await hre.ethers.getContractFactory("LittleDrawlingsNFT");
   const MyNFTDeploy = await MyNFT.deploy();
   const MyNFTDeployed = await MyNFTDeploy.deployed();
 
   const address = await MyNFTDeployed.address;
 
-  console.log(address);
-
   if (!address) return;
 
-  const MyNftJSON = JSON.parse(fs.readFileSync('./artifacts/contracts/LittleDrawlingsNFTFlattened.sol/LittleDrawlingsNFTFlattened.json', 'utf8'));
+  console.log(address);
+
+  const MyNftJSON = JSON.parse(fs.readFileSync('./artifacts/contracts/LittleDrawlingsNFT.sol/LittleDrawlingsNFT.json', 'utf8'));
   const fileResult = JSON.stringify({
     address: address,
     abi: MyNftJSON.abi
