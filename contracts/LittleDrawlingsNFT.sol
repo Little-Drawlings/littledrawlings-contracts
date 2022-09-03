@@ -13,7 +13,7 @@ contract LittleDrawlingsNFT is ERC721URIStorage, Ownable {
     address private _owner;
     address private _wallet;
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    Counters.Counter public _tokenIds;
 
     constructor() ERC721("LittleDrawlingsNFT", "NFT") {
         _owner = msg.sender;
