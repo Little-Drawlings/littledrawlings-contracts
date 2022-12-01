@@ -19,25 +19,45 @@ contract LittleDrawlingsNFT is ERC721URIStorage, Ownable {
         _owner = msg.sender;
     }
 
+    event NFTCreated(address owner, uint256 tokenID);
+    event NFTUpdated(address owner, uint256 tokenID);
+    event TransferSent(address _from, uint _amount);
+
     uint256 public MINT_AMOUNT = 0.00021 ether;
+    uint256 public UPDATE_INFO_AMOUNT = 0.000025 ether;
+    uint256 public UPDATE_IMAGE_AMOUNT = 0.00000625 ether;
 
     function changeAmount(uint256 value) public isOwner() {
         MINT_AMOUNT = value;
     }
 
     function mintNFT(address recipient, string memory tokenURI)
-        public
-        payable
-        returns (uint256)
+    public
+    payable
+    returns (uint256)
     {
         _tokenIds.increment();
         console.log('MINT_AMOUNT', MINT_AMOUNT);
-        require(_tokenIds.current() > 0 && _tokenIds.current() < 21000, "Exceeds token supply");
         require(MINT_AMOUNT == (msg.value), "invalid amount");
         uint256 newItemId = _tokenIds.current();
         _mint(recipient, newItemId);
         _setTokenURI(newItemId, tokenURI);
+        emit NFTCreated(msg.sender, newItemId);
         return newItemId;
+    }
+
+    function updateInfo(uint256 tokenID) public payable {
+        require(msg.value == UPDATE_INFO_AMOUNT, "invalid amount");
+        emit NFTUpdated(msg.sender, tokenID);
+    }
+
+    function updateImage(uint256 tokenID) public payable {
+        require(msg.value == UPDATE_IMAGE_AMOUNT, "invalid amount");
+        emit NFTUpdated(msg.sender, tokenID);
+    }
+
+    function withdraw() public onlyOwner {
+        payable(msg.sender).transfer(address(this).balance);
     }
 
     modifier isOwner() {
@@ -46,6 +66,6 @@ contract LittleDrawlingsNFT is ERC721URIStorage, Ownable {
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
-        return "https://ipfs.pragmaticdlt.com/ipns/";
+        return "";
     }
 }
